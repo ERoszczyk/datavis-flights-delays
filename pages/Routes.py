@@ -7,7 +7,6 @@ from draw_map import draw_routes
 from draw_statistics import draw_avg_flight_delay_by_delay_type_routes, \
     draw_monthly_avg_flight_delay_by_month_routes
 from filters import display_time_filters, display_city_filter, display_airport_filter
-from main import get_flights_df, get_airlines_df
 
 PAGE_TITLE = 'Flight Delays'
 PAGE_ICON = '🗺️'
@@ -39,13 +38,12 @@ def reset_filters():
 
 
 def main():
-    df = pd.read_csv('2015_dataset/merged_3k_sample.csv')
-    airport_df = pd.read_csv('2015_dataset/airports.csv')
+    df = pd.read_csv('2015_dataset/merged_1k_sample.csv')
     start, end, min_time, max_time = display_time_filters()
     dep_cities, arr_cities = display_city_filter(df)
     dep_airport, arr_airport = display_airport_filter(df, dep_cities, arr_cities)
     st.sidebar.button('Reset filters', on_click=reset_filters)
-    draw_routes(df, airport_df, dep_cities, arr_cities, dep_airport, arr_airport)
+    draw_routes(df, dep_cities, arr_cities, dep_airport, arr_airport)
 
     col1, col2 = st.columns(2)
     with col1:

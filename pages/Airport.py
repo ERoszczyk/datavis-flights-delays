@@ -34,7 +34,7 @@ def reset_filters():
 
 
 def main():
-    df = pd.read_csv('2015_dataset/merged_3k_sample.csv')
+    df = pd.read_csv('2015_dataset/merged_1k_sample.csv')
     start, end, min_time, max_time = display_time_filters()
     st.sidebar.button('Reset filters', on_click=reset_filters)
 

@@ -64,28 +64,7 @@ def draw_map_with_mean_delay(df, start_date, end_date, start_time, end_time):
         airport = df.iloc[nr]['AIRPORT_x']
         st.session_state.selected_airport = airport
 
-
-def route(flight, airport):
-    # for origin airports info
-    a = flight.loc[:, ['ORIGIN_AIRPORT', 'DESTINATION_AIRPORT', 'ARRIVAL_DELAY']]
-    a['AtoB'] = a['ORIGIN_AIRPORT'] + a['DESTINATION_AIRPORT']
-    b = a.loc[:, ['AtoB', 'ARRIVAL_DELAY']].groupby('AtoB').mean()
-    b['IATA_CODE'] = b.index.str[:3]
-    c = pd.merge(airport, b.reset_index())
-    c.rename(columns={'IATA_CODE': 'ORIGIN_AIRPORT'}, inplace=True)
-    c_sorted = c.set_index('AtoB').sort_index()
-
-    # for destination airports info
-    b.drop('IATA_CODE', axis=1, inplace=True)
-    b['IATA_CODE'] = b.index.str[3:]
-    d = pd.merge(airport, b.reset_index())
-    d.rename(columns={'IATA_CODE': 'DESTINATION_AIRPORT'}, inplace=True)
-    d_sorted = d.set_index('AtoB').sort_index()
-
-    return (c_sorted, d_sorted)
-
-
-def draw_routes(df, airport_df, departure_cities, arrival_cities, departure_airports, arrival_airports):
+def draw_routes(df, departure_cities, arrival_cities, departure_airports, arrival_airports):
     if len(departure_cities) > 0:
         df = df[df['CITY_x'].isin(departure_cities)]
     if len(arrival_cities) > 0:
@@ -95,12 +74,10 @@ def draw_routes(df, airport_df, departure_cities, arrival_cities, departure_airp
     if len(arrival_airports) > 0:
         df = df[df['AIRPORT_y'].isin(arrival_airports)]
 
-    route_origin, route_destination = route(df, airport_df)
-
     # draw the airport points in the map
     data = [dict(type='scattergeo',
-                 lat=route_origin['LATITUDE'],
-                 lon=route_origin['LONGITUDE'],
+                 lat=df['LATITUDE_x'],
+                 lon=df['LONGITUDE_x'],
                  marker=dict(
                      color='#FFD700',
                      line=dict(
@@ -113,8 +90,8 @@ def draw_routes(df, airport_df, departure_cities, arrival_cities, departure_airp
                  mode='markers',
                  )]
     data += [dict(type='scattergeo',
-                  lat=route_destination['LATITUDE'],
-                  lon=route_destination['LONGITUDE'],
+                  lat=df['LATITUDE_y'],
+                  lon=df['LONGITUDE_y'],
                   marker=dict(
                       color='#FFD700',
                       line=dict(
@@ -128,19 +105,19 @@ def draw_routes(df, airport_df, departure_cities, arrival_cities, departure_airp
                   )]
 
     # draw the flight route in the map
-    for i in range(route_origin.shape[0]):
+    for i in range(df.shape[0]):
         data += [dict(
-            lat=[route_origin['LATITUDE'][i], route_destination['LATITUDE'][i]],
+            lat=[df['LATITUDE_x'][i], df['LATITUDE_y'][i]],
             line=dict(
                 color='#4682B4',
                 width=1
             ),
-            lon=[route_origin['LONGITUDE'][i], route_destination['LONGITUDE'][i]],
+            lon=[df['LONGITUDE_x'][i], df['LONGITUDE_y'][i]],
             mode="lines",
-            text=('From: ' + (route_origin['AIRPORT'][i])
-                  + '<br>To: ' + route_destination['AIRPORT'][i]
+            text=('From: ' + (df['AIRPORT_x'][i])
+                  + '<br>To: ' + df['AIRPORT_y'][i]
                   + '<br>Avg. Delay: '
-                  + ((route_origin['ARRIVAL_DELAY'][i] * 100).astype(int) / 100).astype(str)
+                  + ((df['ARRIVAL_DELAY'][i] * 100).astype(int) / 100).astype(str)
                   + ' mins'
                   ),
             opacity=0.8,
@@ -172,7 +149,7 @@ def draw_routes(df, airport_df, departure_cities, arrival_cities, departure_airp
     if selected_route:
         nr = selected_route[0]['curveNumber']
 
-        airport_dep = route_origin.iloc[nr - 2]['AIRPORT']
-        airport_arr = route_destination.iloc[nr - 2]['AIRPORT']
+        airport_dep = df.iloc[nr - 2]['AIRPORT_x']
+        airport_arr = df.iloc[nr - 2]['AIRPORT_y']
         st.session_state.route_origin = airport_dep
         st.session_state.route_destination = airport_arr

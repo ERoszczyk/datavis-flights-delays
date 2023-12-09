@@ -32,7 +32,7 @@ def reset_filters():
 
 
 def main():
-    df = pd.read_csv('2015_dataset/merged_3k_sample.csv')
+    df = pd.read_csv('2015_dataset/merged_1k_sample.csv')
     airline_df = pd.read_csv('2015_dataset/airlines.csv')
 
     col1, col2 = st.columns(2)

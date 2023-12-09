@@ -32,7 +32,7 @@ def set_streamlit_page():
 
 
 def main():
-    df = pd.read_csv('2015_dataset/merged_10k_sample.csv')
+    df = pd.read_csv('2015_dataset/merged_3k_sample.csv')
     df_airlines = pd.read_csv('2015_dataset/airlines.csv')
 
     start, end, min_time, max_time = display_time_filters()

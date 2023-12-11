@@ -85,9 +85,10 @@ def draw_routes(df, departure_cities, arrival_cities, departure_airports, arriva
                          width=1
                      ),
                      opacity=0.8,
-                     size=6
+                     size=6,
                  ),
                  mode='markers',
+                 name='',
                  )]
     data += [dict(type='scattergeo',
                   lat=df['LATITUDE_y'],
@@ -99,9 +100,10 @@ def draw_routes(df, departure_cities, arrival_cities, departure_airports, arriva
                           width=1
                       ),
                       opacity=0.8,
-                      size=6
+                      size=6,
                   ),
                   mode='markers',
+                  name='',
                   )]
 
     # draw the flight route in the map
@@ -121,6 +123,7 @@ def draw_routes(df, departure_cities, arrival_cities, departure_airports, arriva
                   + ' mins'
                   ),
             opacity=0.8,
+            name='',
             type="scattergeo"
         )]
 

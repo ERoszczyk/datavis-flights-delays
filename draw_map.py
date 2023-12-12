@@ -107,19 +107,21 @@ def draw_routes(df, departure_cities, arrival_cities, departure_airports, arriva
                   )]
 
     # draw the flight route in the map
+
     for i in range(df.shape[0]):
+        row = df.iloc[i]
         data += [dict(
-            lat=[df['LATITUDE_x'][i], df['LATITUDE_y'][i]],
+            lat=[row['LATITUDE_x'], row['LATITUDE_y']],
             line=dict(
                 color='#4682B4',
                 width=1
             ),
-            lon=[df['LONGITUDE_x'][i], df['LONGITUDE_y'][i]],
+            lon=[row['LONGITUDE_x'], row['LONGITUDE_y']],
             mode="lines",
-            text=('From: ' + (df['AIRPORT_x'][i])
-                  + '<br>To: ' + df['AIRPORT_y'][i]
+            text=('From: ' + (row['AIRPORT_x'])
+                  + '<br>To: ' + row['AIRPORT_y']
                   + '<br>Avg. Delay: '
-                  + ((df['ARRIVAL_DELAY'][i] * 100).astype(int) / 100).astype(str)
+                  + ((row['ARRIVAL_DELAY'] * 100).astype(int) / 100).astype(str)
                   + ' mins'
                   ),
             opacity=0.8,

@@ -1,4 +1,2 @@
-[global]
-disableWatchdogWarning = false
-disableWidgetStateDuplicationWarning = false
-showWarningOnDirectExecution = false
+[server]
+maxMessageSize = 4096
